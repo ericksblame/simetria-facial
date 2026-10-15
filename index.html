@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Simetría">
+  <title>Simetría facial</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Simetría facial</h1>
+      <p class="sub">Medición en vivo con la cámara, recomendaciones y seguimiento. Todo se procesa en tu dispositivo.</p>
+    </div>
+    <span class="privacy-pill" title="La imagen nunca sale del navegador. El historial guarda solo números.">🔒 Tu cara no sale del dispositivo</span>
+  </header>
+
+  <section class="notice" aria-label="Aviso importante">
+    <details open>
+      <summary><strong>Antes de empezar: lo que esta app puede y no puede hacer</strong></summary>
+      <ul>
+        <li>Casi ninguna cara es perfectamente simétrica. Las diferencias pequeñas son normales y no indican ningún problema.</li>
+        <li>La medición es aproximada: se hace en 2D con la cámara, y la luz, el ángulo, la expresión y la lente cambian los números. Compara siempre en las mismas condiciones (misma luz, misma distancia, cara relajada y de frente).</li>
+        <li>Los ejercicios y hábitos pueden mejorar la postura, la tensión y el control de los músculos, pero <strong>su efecto es limitado y no cambian la estructura ósea</strong>. Si una asimetría viene del hueso, la mordida o el tabique, la valoración la hace un profesional (dentista, ortodoncista, otorrino, cirujano maxilofacial).</li>
+        <li>Esto no es un diagnóstico médico.</li>
+      </ul>
+      <p class="redflag"><strong>Acude a urgencias de inmediato</strong> si notas una asimetría <em>repentina</em>: la boca se cae de un lado, no puedes cerrar un ojo, hablas con dificultad o sientes debilidad en un brazo. Puede ser un ictus o una parálisis facial. Si una asimetría es marcada o va a más con las semanas, consúltala con un médico.</p>
+    </details>
+  </section>
+
+  <main class="layout">
+    <section class="stage-col">
+      <div class="stage" id="stage">
+        <canvas id="canvas" width="1280" height="720" aria-label="Imagen de la cámara con los puntos de referencia"></canvas>
+        <video id="video" playsinline muted></video>
+        <div class="stage-empty" id="stageEmpty">
+          <p>Enciende la cámara o analiza una foto tuya de frente.</p>
+        </div>
+        <div class="hint" id="hint" hidden></div>
+        <div class="progress" id="progress" hidden><div class="bar" id="progressBar"></div><span id="progressText">Midiendo…</span></div>
+      </div>
+      <div class="controls">
+        <button id="btnCamera" class="primary">Encender cámara</button>
+        <label class="button" for="fileInput">Analizar una foto</label>
+        <input id="fileInput" type="file" accept="image/*" hidden>
+        <button id="btnCapture" disabled>Medir y guardar</button>
+        <label class="toggle"><input type="checkbox" id="chkMesh" checked> Malla</label>
+      </div>
+      <p class="tips">Para medir bien: cara de frente y a la altura de la cámara, luz uniforme (sin una sombra fuerte en un lado), sin gafas, pelo fuera de la frente, boca cerrada y expresión relajada.</p>
+      <p class="status" id="status">Cargando el modelo de puntos faciales…</p>
+    </section>
+
+    <section class="results-col">
+      <div class="score-card">
+        <div class="score-ring" id="scoreRing"><span id="scoreValue">–</span></div>
+        <div>
+          <h2>Puntuación de simetría</h2>
+          <p id="scoreSource" class="muted">Sin medición todavía</p>
+          <p class="muted small">100 = simetría perfecta en esta medición. Entre 70 y 100 es lo habitual en caras sin ningún problema.</p>
+        </div>
+      </div>
+      <div id="zones" class="zones"><div class="zone muted small">Aquí verás, por zonas, la diferencia entre tu lado derecho y el izquierdo: ojos, cejas, comisuras, mandíbula y mentón, nariz e inclinación de la cabeza.</div></div>
+    </section>
+  </main>
+
+  <section class="panel" id="recsPanel">
+    <h2>Recomendaciones</h2>
+    <p class="muted" id="recsIntro">Mide tu cara para ver recomendaciones según tus zonas con más diferencia.</p>
+    <div id="recs"></div>
+  </section>
+
+  <section class="panel" id="historyPanel">
+    <div class="panel-head">
+      <h2>Historial</h2>
+      <div class="history-tools">
+        <select id="historyMetric" aria-label="Qué mostrar en la gráfica"></select>
+        <button id="btnExport">Exportar</button>
+        <button id="btnClear" class="danger">Borrar historial</button>
+      </div>
+    </div>
+    <p class="muted small">Se guardan solo números (nunca fotos), en este navegador y en este dispositivo (el historial del iPhone y el del Mac van por separado). Una medición al día, en condiciones parecidas, es suficiente: los cambios reales, si los hay, se ven en semanas o meses.</p>
+    <div id="alert" class="alert" hidden></div>
+    <div id="chart" class="chart"></div>
+    <table class="history-table">
+      <thead><tr><th>Fecha</th><th>Puntuación</th><th>Zona con más diferencia</th><th></th></tr></thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+  </section>
+
+  <footer class="foot muted small">
+    El modelo de puntos faciales (MediaPipe Face Landmarker) está guardado dentro de la carpeta de la app y se ejecuta en el navegador. Las mediciones en milímetros son aproximadas: se calculan suponiendo una distancia entre pupilas de 63 mm.
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
